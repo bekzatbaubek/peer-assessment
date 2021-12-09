@@ -1,0 +1,33 @@
+@(crs: Course, asm: Assignment, subs: Seq[Submission], names: Seq[(Long, String)])(implicit request: RequestHeader, flash: Flash)
+
+@main("Submissions") {
+
+<div class="container p-0">
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Submissions</a>
+    </nav>
+
+    <div class="m-3">
+
+        <h1 class="h3">@asm.title</h1>
+        <p>@asm.description</p>
+
+        <h1 class="h3">Submissions:</h1>
+            @for(i <- subs){
+                <div class="card border-dark mb-3">
+                    <div class="card-header">@i.subgroup.getOrElse(names.filter(x => x._1 == i.submiteeid).head._2)</div>
+                        <div class="card-body">
+                            <p class="card-text">@i.body</p>
+                        </div>
+                    </div>
+            }
+            
+
+        <div class="my-2 text-right">
+            <a href="@routes.CoursesController.coursePage(crs.code)"><button class="btn btn-primary my-2 mx-2">Back to course</button></a>
+            <a href="@routes.Authentication.logout"><button class="btn btn-danger my-2">Logout</button></a>
+        </div>
+    </div>
+</div>
+}

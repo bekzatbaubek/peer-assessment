@@ -1,0 +1,141 @@
+@(crs: Course, asm: Assignment, qlist: Seq[Question], mcqs: Seq[MCSingle], ranges: Seq[Range])(implicit request: RequestHeader, flash: Flash)
+
+@main("Questionaire") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Submissions</a>
+    </nav>
+    <div class="m-3">  
+
+        <div class="row">
+            <div class="col-md">
+                <div class="m-2" style="overflow: hidden;">
+                    <h1 class="h3">New question</h1>
+                    <label for="typeselect">Question type:</label>
+                    <select class="form-control mb-2" style="max-width: 400px;" name="typeselect" id="tselect" onchange="changeQType(this)">
+                        <option value="short">Short-answer question</option>
+                        <option value="mc">Multiple choice</option>
+                        <option value="range">Range</option>
+                    </select>
+
+                    <div id="short">
+                        <form action="@routes.QuestionaireController.addQuestion("shortq" , crs.code, asm.id)" method="post">
+                            @helper.CSRF.formField
+                            <h1 class="h4">Question with short answer</h1>
+                            <label class="sr-only" for="question">Question:</label>
+                            <input type="text" class="form-control mb-2" style="max-width: 400px;" name="question" id="shortq" placeholder="Question body" required>
+                            <button class="btn btn-primary" type="submit">Add question</button>
+                        </form>
+                    </div>
+
+                    <div id="mc" style="display: none;">
+                        <form action="@routes.QuestionaireController.addQuestion("mcq", crs.code, asm.id)" method="post" id="mcform">
+                            @helper.CSRF.formField
+                            <h1 class="h4">Multiple choice question</h1>
+                            <label for="question">Question:</label>
+                            <input type="text" class="form-control" style="max-width: 400px;" name="question" id="mcq" placeholder="Question body" required>
+                            <input type="hidden" name="optsnumber" id="optsnumber" value="0">
+                            <button class="btn btn-primary my-2" type="button" onclick="addAnswerMC()">Add answer</button>
+                            <div id="mcanswers">
+                                
+                            </div>
+                            <button class="btn btn-primary" type="submit">Add question</button>
+                        </form>
+                    </div>
+
+                    <div id="range" style="display: none;">
+                        <form action="@routes.QuestionaireController.addQuestion("rangeq" , crs.code, asm.id)" method="post">
+                            @helper.CSRF.formField
+                            <h1 class="h4">From 1 to N</h1>
+                            <label for="question">Question:</label>
+                            <input type="text" class="form-control" name="question" style="max-width: 400px;" id="rangeq" placeholder="Question body" required>
+                            <label for="rangenum">Number of points:</label>
+                            <input type="number" class="form-control mb-2" style="max-width: 100px;" name="rangenum" id="rangenum" min="1" max="100" required>
+                            <button class="btn btn-primary" type="submit">Add question</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md">
+                <h1 class="h3">Questionaire</h1>
+                <ul class="list-group">
+                    @for(i <- qlist.sortBy(_.id)){
+                        <li class="list-group-item">@i.question
+                            @if(i.qtype == "mcq"){
+                                <ul>
+                                @for(j <- mcqs; if j.qid == i.id){
+                                    <li>@j.option</li>
+                                }
+                                </ul>
+                            }
+                            @if(i.qtype == "rangeq"){
+                                <span class="ml-3">1 to @ranges.filter(r => r.qid == i.id).map(x => x.mxnum)</span>
+                            }
+                        </li>
+                    }
+                </ol>
+            </div>
+
+        </div> <!-- row -->
+
+            <div class="my-2 text-right">
+                <a href="@routes.QuestionaireController.allResponces(crs.code, asm.id)"><button class="btn btn-primary my-2">Responces</button></a>
+                <a href="@routes.CoursesController.coursePage(crs.code)"><button class="btn btn-primary my-2 mx-2">Back to course</button></a>
+                <a href="@routes.Authentication.logout"><button class="btn btn-danger my-2">Logout</button></a>
+            </div>
+
+    </div>
+
+</div>
+
+<script>
+    function changeQType(selectedObject){
+        var select = document.getElementById("tselect");
+        var selectedOpt = selectedObject.value
+
+        var mc = document.getElementById("mc");
+        var short = document.getElementById("short");
+        var range = document.getElementById("range");
+
+        mc.style.display = "none";
+        short.style.display = "none";
+        range.style.display = "none";
+
+        switch(selectedOpt){
+            case "mc": mc.style.display = "block"; break;
+            case "short": short.style.display = "block"; break;
+            case "range": range.style.display = "block"; break;
+        }
+    }
+
+    function addAnswerMC() {
+
+        var mcanswers = document.getElementById("mcanswers");
+        var mcnum = document.getElementById("optsnumber");
+
+        var newans = document.createElement("input");
+            newans.className = "mcanswer"
+        var ansnum = mcanswers.getElementsByClassName("mcanswer").length + 1;
+            newans.setAttribute("type", "text");
+            newans.setAttribute("name", "answer" + ansnum);
+            newans.setAttribute("class", "form-control");
+            newans.required = true;
+        var newanslabel = document.createElement("label");
+            newanslabel.innerText = "Answer:"
+            newanslabel.setAttribute("for", "answer" + ansnum);
+            newans.innerText = "Answer";
+
+        var br = document.createElement("br")
+
+        mcnum.setAttribute("value", ansnum);
+
+        mcanswers.appendChild(newanslabel);
+        mcanswers.appendChild(newans);
+        mcanswers.appendChild(br);
+        console.log(ansnum);
+    }
+
+</script>
+
+}

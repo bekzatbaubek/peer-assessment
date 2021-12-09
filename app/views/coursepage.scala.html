@@ -1,0 +1,90 @@
+@(crs: Course, asmlist: Seq[Assignment])(implicit request: RequestHeader, flash: Flash)
+
+@main("Course") {
+<div class="container p-0">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">@crs.name - @crs.code</a>
+    </nav>
+
+    <div id="erroralert" class="alert alert-dismissible alert-danger my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error!</strong> 
+        <span id="errormsg"></span>
+    </div>
+    <div id="successalert" class="alert alert-dismissible alert-success my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> 
+        <span id="successmsg"></span>
+    </div>
+
+    <div class="mx-3">
+        <h1 class="h3 my-3 mx-1">Assignments</h1>
+        @for(i <- asmlist){
+        <div class="card border-dark mb-3">
+            <div class="card-header">@i.title</div>
+                <div class="card-body">
+                <p class="card-text">@i.description</p>
+                    <div class="m-auto text-right">
+                        <a href="@routes.CoursesController.groupPage(crs.code, i.id)"><button class="btn btn-primary m-1">Groups</button></a>
+                        <a href="@routes.CoursesController.allSubs(crs.code, i.id)"><button class="btn btn-primary m-1">Submissions</button></a>
+                        <a href="@routes.QuestionaireController.questionairePage(crs.code, i.id)"><button class="btn btn-primary m-1">Questionaire</button></a>
+                        <a href="@routes.CoursesController.removeAssignment(crs.code, i.id)"><button class="btn btn-danger m-1">Remove assignment</button></a>            
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="text-right" style="overflow: hidden;">
+        <button class="btn btn-primary m-3" id="newasmtoggle" onclick="newAsmToggle()">New assignment</button>
+        <form id="newasm" class="" action="@routes.CoursesController.addAssignment(crs.code)" method="post">
+            <div class="mx-3 float-md-right" style="max-width: 500px;">
+                @helper.CSRF.formField
+                <input type="text" class="form-control mb-2" name="title" placeholder="Assignment title" required>
+                <textarea name="desc" class="form-control" cols="40" rows="6" placeholder="Assignment description" required></textarea>
+                <button type="submit" class="btn btn-primary my-2">Add</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="m-3 text-right">
+        <a href="@routes.CoursesController.studentsPage(crs.code)"><button class="btn btn-primary my-2 mx-1">Manage students</button></a>
+        <a href="@routes.Application.homepage"><button class="btn btn-primary my-2 mr-1">Back to dashboard</button></a>
+        <a href="@routes.Authentication.logout"><button class="btn btn-danger my-2">Logout</button></a>
+    </div>
+
+</div>
+
+<script>
+    var err = "@flash.get("error").getOrElse("none")";
+    var alrt = document.getElementById("erroralert");
+    if (err == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("errormsg").innerHTML = err;
+    }
+
+    var succ = "@flash.get("success").getOrElse("none")";
+    var alrt = document.getElementById("successalert");
+    if (succ == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("successmsg").innerHTML = succ;
+    }
+    
+    document.getElementById("newasm").style.display = "none";
+    function newAsmToggle(){
+        var x = document.getElementById("newasm");
+        var btn = document.getElementById("newasmtoggle");
+        if(x.style.display == "none"){
+            x.style.display = "block";
+            btn.innerHTML = "Close"
+        }
+        else{
+            x.style.display = "none";
+            btn.innerHTML = "New assignment"
+        }
+    }
+</script>
+}

@@ -1,0 +1,35 @@
+@(code: String, alls: Seq[User], enrolled: Seq[Long])(implicit request: RequestHeader, flash: Flash)
+
+@main("Manage Students"){
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Manage students</a>
+    </nav>    
+
+    <div class="mx-3">
+        <h1 class="h4 text-center mt-2">Students enrolled in @code</h1>
+        <table class="table table-hover">
+            <tbody>
+            @for(i <- alls.sortBy(_.fullname); if enrolled.contains(i.id) ){
+                <tr class="table-dark"><td>@i.fullname</td></tr>
+            }   
+            </tbody>
+        </table>
+
+        <h1 class="h4 text-center mt-2">All students</h1>
+        <ul class="list-group mb-3">
+        @for(i <- alls.sortBy(_.fullname); if !enrolled.contains(i.id)){
+            <li class="list-group-item">
+            <b>@i.fullname</b>
+            <a href="@routes.CoursesController.addStudent(code, i.id)"><button class="btn btn-primary btn-sm float-right">Add</button></a>
+            </li>
+        }
+        </ul>
+        
+        <div class="my-3 text-right">
+            <a href="@routes.CoursesController.coursePage(code)"><button class="btn btn-primary mr-1">Back to course</button></a>
+            <a href="@routes.Authentication.logout"><button class="btn btn-danger">Logout</button></a>
+        </div>
+    </div>
+</div>
+}

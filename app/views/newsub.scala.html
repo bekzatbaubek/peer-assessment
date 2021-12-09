@@ -1,0 +1,70 @@
+@(crs: Course, asm: Assignment)(implicit request: RequestHeader, flash: Flash)
+
+@main("Add submission") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Add submission</a>
+    </nav>
+
+    <div id="erroralert" class="alert alert-dismissible alert-danger my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error!</strong> 
+        <span id="errormsg"></span>
+    </div>
+    <div id="successalert" class="alert alert-dismissible alert-success my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> 
+        <span id="successmsg"></span>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md m-3">
+            <div class="card border-dark">
+                <div class="card-header">@asm.title</div>
+                    <div class="card-body">
+                    <p class="card-text">@asm.description</p>
+                    </div>
+                </div>
+            
+        </div>
+
+        <div class="col-md m-3 text-right">
+            <form action="" method="post">
+                <h3 class="text-center">New Submission</h3>
+                <div class="form-group">
+                    @helper.CSRF.formField
+                    <textarea name="subbody" class="form-control my-2" id="" cols="30" rows="10" required placeholder="Enter your submission text here"></textarea>
+                    <button class="btn btn-primary" type="submit">Add submission</button>
+                </div>
+            </form>
+        
+        
+        <div class="text-right">
+            <a href="@routes.CoursesController.coursePage(crs.code)"><button class="btn btn-primary">Back to course</button></a>
+            <a href="@routes.Authentication.logout"><button class="btn btn-danger ml-1">Logout</button></a>    
+        </div>
+        
+    </div>
+
+    </div>
+</div>
+
+<script>
+    var err = "@flash.get("error").getOrElse("none")";
+    var alrt = document.getElementById("erroralert");
+    if (err == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("errormsg").innerHTML = err;
+    }
+
+    var succ = "@flash.get("success").getOrElse("none")";
+    var alrt = document.getElementById("successalert");
+    if (succ == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("successmsg").innerHTML = succ;
+    }
+</script>
+}

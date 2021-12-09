@@ -1,0 +1,58 @@
+@()(implicit request: RequestHeader, flash: Flash)
+
+@main("New Course") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">New course</a>
+    </nav>
+
+    <div class="m-3">
+
+        <div id="erroralert" class="alert alert-dismissible alert-danger my-1">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Error!</strong> 
+            <span id="errormsg"></span>
+        </div>
+        <div id="successalert" class="alert alert-dismissible alert-success my-1">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Success!</strong> 
+            <span id="successmsg"></span>
+        </div>
+    
+        <form class="text-right" action="" method="post">
+            <div class="form-group">
+                @helper.CSRF.formField
+                <label class="sr-only" for="title">Course name:</label>
+                <input class="form-control mb-2" type="text" name="title" placeholder="Course name" id="" required>
+                <label class="sr-only" for="code">Course code:</label>
+                <input class="form-control" type="text" name="code" id="" placeholder="Course code" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Add</button>
+        </form>
+
+
+        <div class="my-3 text-right">
+            <a href="@routes.Application.homepage"><button class="btn btn-primary mx-2">Back to dashboard</button></a>
+            <a href="@routes.Authentication.logout"><button class="btn btn-danger">Logout</button></a>    
+        </div>
+    </div>
+</div>
+
+<script>
+    var err = "@flash.get("error").getOrElse("none")";
+    var alrt = document.getElementById("erroralert");
+    if (err == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("errormsg").innerHTML = err;
+    }
+
+    var succ = "@flash.get("success").getOrElse("none")";
+    var alrt = document.getElementById("successalert");
+    if (succ == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("successmsg").innerHTML = succ;
+    }
+</script>
+}

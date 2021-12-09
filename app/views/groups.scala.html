@@ -1,0 +1,84 @@
+@(code: String, asmid: Long, glist: Map[String, Seq[Group]], tuples: Map[Long, String])(implicit request: RequestHeader, flash: Flash)
+
+@main("Groups for assignment") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Groups</a>
+    </nav>
+
+    <div id="erroralert" class="alert alert-dismissible alert-danger my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error!</strong> 
+        <span id="errormsg"></span>
+    </div>
+    <div id="successalert" class="alert alert-dismissible alert-success my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> 
+        <span id="successmsg"></span>
+    </div>
+
+<div class="m-3">
+    <div class="row">
+        <div class="col-md">
+            <h1 class="h4 text-center">Created groups:</h1>
+            <ul class="list-group mb-2">
+            @if(glist.isEmpty){
+                <p>No groups created</p>
+            }else{
+                @for(gr <- glist){
+                    <li class="list-group-item">
+                    <strong class="mr-2">@gr._1:</strong>
+                    @for(j <- gr._2){@tuples.apply(j.sid); }
+                    <a href="@routes.CoursesController.deleteGroup(code, asmid, gr._1)"><button class="btn btn-danger btn-sm float-right">Delete group</button></a>
+                </li>
+                }
+            }
+            </ul>
+        </div>
+
+        <div class="col-md">
+            <form action="" method="post" style="overflow: hidden;">
+                <h1 class="h4 text-center">New group</h1>
+                <div class="form-group">
+                @helper.CSRF.formField
+                <label for="gname" class="sr-only">Group name:</label>
+                <input type="text" class="form-control text-center m-auto" style="max-width: 500px;" name="gname" id="" value="Group @(glist.size+1)" required>
+                    <ul class="list-group my-3">
+                    @for(i <- tuples; if !(glist.flatMap(g => g._2).map(g => g.sid).toSeq contains i._1)){
+                        <li class="list-group-item">
+                            <label for="student@i._1">@i._2</label>
+                            <input type="checkbox" class="form-check-custom float-right" name="students" id="student@i._1" value="@i._1">
+                        </li>
+                    }
+                    </ul>
+                </div>
+                <button class="btn btn-primary float-right" type="submit">Group students</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="my-2 text-right">
+        <a href="@routes.CoursesController.coursePage(code)"><button class="btn btn-primary my-2 mx-2">Back to course</button></a>
+        <a href="@routes.Authentication.logout"><button class="btn btn-danger my-2">Logout</button></a>
+    </div>
+
+    </div>
+</div>
+<script>
+    var err = "@flash.get("error").getOrElse("none")";
+    var alrt = document.getElementById("erroralert");
+    if (err == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("errormsg").innerHTML = err;
+    }
+
+    var succ = "@flash.get("success").getOrElse("none")";
+    var alrt = document.getElementById("successalert");
+    if (succ == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("successmsg").innerHTML = succ;
+    }
+</script>
+}

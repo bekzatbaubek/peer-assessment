@@ -1,0 +1,58 @@
+@(crs: Course, asmlist: Seq[Assignment])(implicit request: RequestHeader, flash: Flash)
+
+@main("Course") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">@crs.name - @crs.code</a>
+    </nav>
+
+    <div id="erroralert" class="alert alert-dismissible alert-danger my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error!</strong> 
+        <span id="errormsg"></span>
+    </div>
+    <div id="successalert" class="alert alert-dismissible alert-success my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> 
+        <span id="successmsg"></span>
+    </div>
+
+    <div class="container">
+        <h3 class="my-3">Assignments</h3>
+        @for(i <- asmlist){
+            <div class="card border-dark mb-3">
+                <div class="card-header">@i.title</div>
+                    <div class="card-body">
+                    <p class="card-text">@i.description</p>
+                        <div class="m-auto text-right">
+                            <a href="@routes.QuestionaireController.qResponcePage(crs.code, i.id)"><button class="btn btn-primary m-1">Questionaire</button></a>
+                            <a href="@routes.CoursesController.addSubmissionPage(crs.code, i.id)"><button class="btn btn-primary m-1">Add submission</button></a>          
+                        </div>
+                    </div>
+                </div>
+        }
+        <div class="my-3 text-right">
+            <a href="@routes.Application.homepage"><button class="btn btn-primary">Back to dashboard</button></a>
+            <a href="@routes.Authentication.logout"><button class="btn btn-danger ml-1">Logout</button></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    var err = "@flash.get("error").getOrElse("none")";
+    var alrt = document.getElementById("erroralert");
+    if (err == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("errormsg").innerHTML = err;
+    }
+
+    var succ = "@flash.get("success").getOrElse("none")";
+    var alrt = document.getElementById("successalert");
+    if (succ == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("successmsg").innerHTML = succ;
+    }
+</script>
+}

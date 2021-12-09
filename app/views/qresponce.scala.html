@@ -1,0 +1,129 @@
+@(code: String, asmid: Long, questions: Seq[Question], mcqs: Map[Long, Seq[MCSingle]], rangeqs: Map[Long, Seq[Range]], subs: Seq[(Long, String, String)], groups: Seq[(Long, String, Seq[String])])(implicit request: RequestHeader, flash: Flash)
+
+@main("Questionaire") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Questionaire</a>
+    </nav>
+
+    <div id="erroralert" class="alert alert-dismissible alert-danger my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Error!</strong> 
+        <span id="errormsg"></span>
+    </div>
+    <div id="successalert" class="alert alert-dismissible alert-success my-1">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> 
+        <span id="successmsg"></span>
+    </div>
+
+    <div class="row m-2">  
+
+        <div class="col-md">
+            <h3>Submissions:</h3>
+            <select class="my-2 form-group" name="" id="selectsub" onchange="changeSub(this)">
+                @for((sub, i) <- subs.zipWithIndex){
+                    <option class="form-control" value="sub@sub._1">@(i+1)</option>
+                }
+            </select>
+
+            @for(i <- subs){
+                <div id="sub@i._1" style="display: none">
+                @for(g <- groups){
+                    <div class="submission">
+                        @if(g._1 == i._1){
+                            <h4>@g._2</h4>
+                            @for(gmate <- g._3){
+                                @gmate
+                            }
+                        }else{
+                            <h4>@i._2</h4>
+                        }
+                        <p>@i._3</p>
+                    </div>
+                }
+                </div>
+            }
+        </div>
+        
+        <div class="col-md">
+            <h3>Questions:</h3>
+            @for(i <- subs){
+                <div id="quest@i._1" style="display: none">
+                    <form class="questions" action="@routes.QuestionaireController.addResponce(code, asmid, i._1)" method="post" id="form@i._1">
+                        <div class="form-group">
+                            @helper.CSRF.formField
+                            <input type="hidden" name="questionnumber" value="@questions.size">
+                            @for((q, index) <- questions.zipWithIndex){
+                                <span>@q.question</span>
+                                <br>
+                                @if(q.qtype == "shortq"){
+                                    <input class="form-control mb-2" type="text" name="question@q.id" id="form@(i._1)short@q.id" placeholder="Answer" required>
+                                }
+                                @if(q.qtype == "mcq"){
+                                    @for(mco <- mcqs.apply(q.id)){
+                                        <input class="form-check-custom" type="radio" name="question@q.id" id="form@(i._1)mc@q.id@mco.option" value="@mco.option" required>
+                                        <label class="align-top" for="question@q.id">@mco.option</label>
+                                        <br>
+                                    }
+                                }
+                                @if(q.qtype == "rangeq"){
+                                    <input class="form-control mb-2" style="max-width: 100px;" type="number" name="question@q.id" id="form@(i._1)radio@q.id" min="1" max="@rangeqs.apply(q.id).map(x => x.mxnum).head.toInt" required>
+                                }
+                            }
+                        </div>
+                        <button class="btn btn-primary float-right" type="submit">Submit</button>
+                    </form>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <div class="m-4 text-right">
+            <a href="@routes.CoursesController.coursePage(code)"><button class="btn btn-primary">Back to course</button></a>
+            <a href="@routes.Authentication.logout"><button class="btn btn-danger ml-1">Logout</button></a>    
+    </div>
+</div>
+
+<script>
+    var err = "@flash.get("error").getOrElse("none")";
+    var alrt = document.getElementById("erroralert");
+    if (err == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("errormsg").innerHTML = err;
+    }
+
+    var succ = "@flash.get("success").getOrElse("none")";
+    var alrt = document.getElementById("successalert");
+    if (succ == "none"){
+        alrt.style.display = "none";
+    }else{
+        document.getElementById("successmsg").innerHTML = succ;
+    }
+
+
+    document.getElementById("sub@subs.headOption.getOrElse((0, "", ""))._1").style.display = "block";
+    document.getElementById("quest@subs.headOption.getOrElse((0, "", ""))._1").style.display = "block";
+    function changeSub(selectedObject) {
+        var select = document.getElementById("selectsub");
+        var selectedOpt = selectedObject.value;
+
+        @for(i <- subs){
+            var sub@i._1 = document.getElementById("sub@i._1");
+            sub@(i._1).style.display = "none";
+
+            var quest@i._1 = document.getElementById("quest@i._1");
+            quest@(i._1).style.display = "none";
+        }
+
+        switch(selectedOpt){            
+            @for(i <- subs){
+                case "sub@i._1": sub@(i._1).style.display = "block"; quest@(i._1).style.display = "block"; break;
+            }
+        }
+    }
+</script>
+
+}

@@ -1,0 +1,43 @@
+@(code: String, asmid: Long, responces: Seq[Responce], questions: Seq[Question], names: Seq[(Long, String)], subs: Seq[Submission])(implicit request: RequestHeader, flash: Flash)
+
+@main("Responces") {
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Questionaire responces</a>
+    </nav>
+
+    <div class="mx-3">
+    @for(submission <- subs){
+        <h1 class="h3 my-2">@submission.subgroup.getOrElse(names.filter(x => x._1 == submission.submiteeid).head._2)</h1>
+        <table class="table table-bordered table-hover" style="empty-cells: show;">
+            <thead>
+                <tr>
+                    <th scope="col">Student</th>
+                    @for(q <- questions.sortBy(_.id)){
+                        <th scope="col">@q.question</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+            @for(i <- names){
+                <tr class="table-dark">
+                    <th scope="row">@i._2</th>
+                    @for(q <- questions.sortBy(_.id)){
+                        <td>
+                            @(responces.filter(resp => resp.sid == i._1 && resp.subid == submission.submiteeid && resp.qid == q.id).map(x => x.responce).headOption)
+                        </td>
+                    }
+                <tr>
+            }
+        </tbody>
+        </table>
+    }
+    </div>
+
+    <div class="my-2 text-right">
+        <a href="@routes.QuestionaireController.questionairePage(code, asmid)"><button class="btn btn-primary m-1">Back to questionaire</button></a>
+        <a href="@routes.Authentication.logout"><button class="btn btn-danger my-2">Logout</button></a>
+    </div>
+
+</div>
+}

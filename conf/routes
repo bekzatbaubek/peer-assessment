@@ -1,0 +1,46 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+
+GET     /                           controllers.Application.index()
+
+# User authentication handlers
+POST    /validate                   controllers.Authentication.validateUser()
+POST    /create                     controllers.Authentication.createUser()
+GET     /logout                     controllers.Authentication.logout()
+
+# Homepage
+GET     /dashboard                  controllers.Application.homepage()
+
+# Courses
+GET     /courses/                   controllers.CoursesController.addCoursePage()
+POST    /courses/                   controllers.CoursesController.addCourse()
+GET     /courses/:code               controllers.CoursesController.coursePage(code: String)
+
+GET     /courses/:code/students      controllers.CoursesController.studentsPage(code: String)
+GET     /courses/:code/add/:id       controllers.CoursesController.addStudent(code: String, id: Long)
+
+# Assignments
+POST    /courses/:code/asm/new       controllers.CoursesController.addAssignment(code: String)
+GET     /courses/:code/:asmid/remove controllers.CoursesController.removeAssignment(code: String, asmid: Long)
+
+# Groups
+GET     /courses/:code/:asmid/groups controllers.CoursesController.groupPage(code: String, asmid: Long)
+POST    /courses/:code/:asmid/groups controllers.CoursesController.addGroup(code: String, asmid: Long)
+GET     /courses/:code/:asmid/groups/:gname/ controllers.CoursesController.deleteGroup(code: String, asmid: Long, gname)
+
+# Submissions
+GET     /courses/:code/:asmid/addsub controllers.CoursesController.addSubmissionPage(code: String, asmid: Long)
+POST    /courses/:code/:asmid/addsub controllers.CoursesController.addSubmission(code: String, asmid: Long)
+GET     /courses/:code/:asmid/submissions controllers.CoursesController.allSubs(code: String, asmid: Long)
+
+# Questionaire
+GET     /courses/:code/:asmid/questions controllers.QuestionaireController.questionairePage(code: String, asmid: Long)
+POST    /courses/:code/:asmid/questions  controllers.QuestionaireController.addQuestion(qtype: String, code: String, asmid: Long)
+
+# Questionaire responces
+GET     /courses/:code/:asmid/questionaire controllers.QuestionaireController.qResponcePage(code: String, asmid: Long)
+GET     /courses/:code/:asmid/responces controllers.QuestionaireController.allResponces(code: String, asmid: Long)
+POST    /courses/:code/:asmid/questionaire/submit/:subid   controllers.QuestionaireController.addResponce(code: String, asmid: Long, subid: Long)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

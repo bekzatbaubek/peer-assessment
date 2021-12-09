@@ -1,0 +1,21 @@
+@(coureslist: Seq[Course])(implicit request: RequestHeader, flash: Flash)
+
+@main("Teacher home") {
+
+<div class="container p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Dashboard</a>
+    </nav>
+    
+    <ul class="list-group m-3">
+        @for(i <- coureslist){
+            <li class="list-group-item"><a href="@routes.CoursesController.coursePage(i.code)">@i.name - @i.code</a></li>
+        }
+    </ul>
+    
+    <div class="m-3 text-right">
+        <a href="@routes.CoursesController.addCoursePage"><button class="btn btn-primary">New course</button></a>
+        <a href="@routes.Authentication.logout"><button class="btn btn-danger ml-1">Logout</button></a>
+    </div>
+</div>
+}
