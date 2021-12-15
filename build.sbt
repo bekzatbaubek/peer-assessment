@@ -8,6 +8,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.13.7"
 
 libraryDependencies ++= Seq(
+  "com.google.inject" % "guice" % "5.0.1",
   guice,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
   jdbc,
