@@ -1,5 +1,6 @@
 name := """peer-assessment"""
 organization := "com.baubek"
+maintainer := "bekzatbaubek"
 
 version := "1.0-SNAPSHOT"
 
@@ -20,6 +21,8 @@ libraryDependencies ++= Seq(
 
 import com.typesafe.sbt.packager.docker._
 dockerBaseImage := "alpine:latest"
+dockerUpdateLatest := true
+dockerUsername := Some("bekzatbaubek")
 dockerExposedPorts := Seq(9000)
 dockerCommands ++= Seq(
   Cmd("USER", "root"),
