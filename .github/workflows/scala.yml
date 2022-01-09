@@ -10,8 +10,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      SBT_NATIVE_CLIENT: true
 
     steps:
     - uses: actions/checkout@v2
