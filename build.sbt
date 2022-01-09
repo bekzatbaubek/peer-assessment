@@ -17,3 +17,11 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
   "org.mindrot" % "jbcrypt" % "0.4"
 )
+
+import com.typesafe.sbt.packager.docker._
+dockerBaseImage := "alpine:latest"
+dockerExposedPorts := Seq(9000)
+dockerCommands ++= Seq(
+  Cmd("USER", "root"),
+  ExecCmd("RUN", "apk", "add", "--no-cache", "openjdk11", "bash"),
+)
