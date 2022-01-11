@@ -18,6 +18,9 @@ $ sbt run
 ```
 3. Visit [localhost:9000](http://localhost:9000) to open the home page
 
+## Docker Image
+After setting up Docker and sbt-native-packager, all the future commits trigger the Continous Integration through GitHub Actions (check out the Actions tab) - that compiles, tests, builds, and publishes the containerized version of the app
+
 ## Tech Stack
 * [Play Framework](https://www.playframework.com/)
 * [SQLite Database](https://www.sqlite.org/index.html) through [Play Slick](https://www.playframework.com/documentation/2.8.x/PlaySlick)
