@@ -9,12 +9,12 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.13.7"
 
 libraryDependencies ++= Seq(
-  "com.google.inject" % "guice" % "5.0.1",
+  "com.google.inject" % "guice" % "5.1.0",
   guice,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
-  "org.xerial" % "sqlite-jdbc" % "3.36.0.3",
-  "com.typesafe.play" %% "play-slick" % "5.0.0",
-  "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
+  "org.xerial" % "sqlite-jdbc" % "3.39.3.0",
+  "com.typesafe.play" %% "play-slick" % "5.1.0",
+  "com.typesafe.slick" %% "slick-hikaricp" % "3.4.1",
   "org.mindrot" % "jbcrypt" % "0.4"
 )
 
